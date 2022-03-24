@@ -32,6 +32,7 @@ public class CmdCheckBlacklist extends AbstractCommand {
     public void deinitialize() {
         msg = null;
         config = null;
+
     }
 
     @Override
