@@ -39,6 +39,9 @@ public class CmdBlacklist extends AbstractCommand {
         if (args.length == 0) {
             sender.sendMessage(MsgUtil.parse(msg.getHelpPageHeader()));
             sender.sendMessage(MsgUtil.parse(msg.getReloadUsage()));
+            sender.sendMessage(MsgUtil.parse(msg.getBlacklistUsage()));
+            sender.sendMessage(MsgUtil.parse(msg.getCheckBlacklistUsage()));
+            sender.sendMessage(MsgUtil.parse(msg.getUnBlacklistUsage()));
             return;
         }
         String uuid = Utility.getUUIDFromIGNAPI(args[0]);
@@ -47,6 +50,8 @@ public class CmdBlacklist extends AbstractCommand {
             sender.sendMessage(MsgUtil.parse(msg.getCantFindPlayer()));
             return;
         }
+
+        uuid = java.util.UUID.fromString(uuid.replaceFirst("(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)", "$1-$2-$3-$4-$5")).toString();
 
         if (heart.blMgr().isBlacklisted(uuid)) {
             sender.sendMessage(MsgUtil.parse(msg.getPlayerAlreadyBlacklisted().replace("{player}", args[0])));
@@ -82,7 +87,7 @@ public class CmdBlacklist extends AbstractCommand {
             reason = "No reason provided";
         }
         StringBuilder announcement = new StringBuilder();
-        if (silent) announcement.append("<dark_red>[Silent]");
+        if (silent) announcement.append("<dark_red>[Silent]<newline>");
         for (int i = 0; i < msg.getAnnounceMessage().size(); i++) {
             announcement.append(heart.blMgr().replace(msg.getAnnounceMessage().get(i), staffName, args[0], reason, System.currentTimeMillis()));
             if (i < msg.getAnnounceMessage().size() - 1) announcement.append("<newline>");
@@ -95,6 +100,12 @@ public class CmdBlacklist extends AbstractCommand {
             }
         } else
             heart.getServer().sendMessage(MsgUtil.parse(announcement.toString()));
+    }
+
+
+    @Override
+    public boolean hasPermission(Invocation invocation) {
+        return invocation.source().hasPermission("blacklist.command.blacklist");
     }
 
     @Override

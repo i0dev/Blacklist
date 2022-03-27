@@ -69,6 +69,11 @@ public class CmdCheckBlacklist extends AbstractCommand {
     }
 
     @Override
+    public boolean hasPermission(Invocation invocation) {
+        return invocation.source().hasPermission("blacklist.command.checkblacklist");
+    }
+
+    @Override
     public List<String> suggest(CommandSource sender, String[] args) {
         if (args.length == 1)
             return tabCompleteHelper(args[0], players());

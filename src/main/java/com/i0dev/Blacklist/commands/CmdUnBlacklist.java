@@ -32,6 +32,9 @@ public class CmdUnBlacklist extends AbstractCommand {
             return;
         }
 
+        uuid = java.util.UUID.fromString(uuid.replaceFirst("(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)", "$1-$2-$3-$4-$5")).toString();
+
+
         if (!heart.blMgr().isBlacklisted(uuid)) {
             sender.sendMessage(MsgUtil.parse(heart.msg().getPlayerNotBlacklisted().replace("{player}", args[0])));
             return;
@@ -54,7 +57,7 @@ public class CmdUnBlacklist extends AbstractCommand {
         heart.blMgr().unBlacklistPlayer(uuid);
 
         StringBuilder announcement = new StringBuilder();
-        if (silent) announcement.append("<dark_red>[Silent]");
+        if (silent) announcement.append("<dark_red>[Silent]<newline>");
         for (int i = 0; i < heart.msg().getUnBlacklistAnnounceMessage().size(); i++) {
             announcement.append(heart.blMgr().replace(heart.msg().getUnBlacklistAnnounceMessage().get(i), staffName, args[0], reason, System.currentTimeMillis()));
             if (i < heart.msg().getUnBlacklistAnnounceMessage().size() - 1) announcement.append("<newline>");
@@ -67,6 +70,11 @@ public class CmdUnBlacklist extends AbstractCommand {
             }
         } else
             heart.getServer().sendMessage(MsgUtil.parse(announcement.toString()));
+    }
+
+    @Override
+    public boolean hasPermission(Invocation invocation) {
+        return invocation.source().hasPermission("blacklist.command.unblacklist");
     }
 
     @Override
